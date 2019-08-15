@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 class ScrollPage extends StatelessWidget {
  
+  final _backgroundStyle = Color.fromRGBO(108, 192, 218, 1.0);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,8 +30,11 @@ class ScrollPage extends StatelessWidget {
   }
 
   Widget _page2() {
-    return Center(
-      child: Text("page2"),
+    return Stack(
+      children: <Widget>[
+        _colorBackground(),
+        _createButton()
+      ],
     );
   }
 
@@ -38,7 +43,7 @@ class ScrollPage extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       decoration: BoxDecoration(
-        color: Color.fromRGBO(108, 192, 218, 1.0)
+        color: _backgroundStyle
       ),
     );
   }
@@ -85,6 +90,36 @@ class ScrollPage extends StatelessWidget {
               color: Colors.white
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _createButton() {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: _backgroundStyle,
+      child: Center(
+        child: RaisedButton(
+          shape: StadiumBorder(),
+          color: Colors.blueAccent,
+          textColor: Colors.white,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 40.0,
+              vertical: 20.0
+            ),
+            child: Text(
+              "Bienvenidos",
+              style: TextStyle(
+                fontSize: 20.0
+              ),
+            ),
+          ),
+          onPressed: (){
+
+          },
         ),
       ),
     );
