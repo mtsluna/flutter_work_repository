@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:qrreader_app/src/model/qr_model.dart';
 import 'package:qrreader_app/src/pages/directions_page.dart';
 import 'package:qrreader_app/src/pages/map_page.dart';
+import 'package:qrcode_reader/qrcode_reader.dart';
+import 'package:qrreader_app/src/providers/db_provider.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -33,13 +36,48 @@ class _HomePageState extends State<HomePage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(          
           child: Icon(Icons.filter_center_focus),
-          onPressed: (){
-
-          },
+          onPressed: _scanQR,
           backgroundColor: Theme.of(context).primaryColor,
         ),
       ),
     );
+  }
+
+  _scanQR() async{
+    
+    //geo:-32.8779124529526,-68.83014693697817
+
+    String futureString = 'http://mlcorp.tech/';
+
+    if(futureString != null){
+
+      Qr qr = Qr(
+        valor: futureString
+      );
+
+      DBProvider.db.save(qr).then((data){
+        print(data);
+      });
+
+    }
+
+    //try {
+
+    //  futureString = await new QRCodeReader().scan();
+
+    //} catch (e) {
+
+    //  futureString = e.toString();
+
+    //}
+
+    //print(futureString);
+
+    //if(futureString != null){
+    //  print('información');
+    //}
+
+
   }
 
   Widget _createBottomNavigationBar() {
