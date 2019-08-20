@@ -1,3 +1,5 @@
+import 'package:latlong/latlong.dart';
+
 class Qr {
     
   int id;
@@ -28,5 +30,13 @@ class Qr {
       "tipo": tipo,
       "valor": valor,
   };
+
+  LatLng getLatLng(){
+
+    final latLng = valor.substring(4).split(',');
+
+    return LatLng(double.parse(latLng[0]), double.parse(latLng[1]));
+
+  }
 
 }

@@ -1,9 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:qrreader_app/src/bloc/scans_bloc.dart';
 import 'package:qrreader_app/src/model/qr_model.dart';
 import 'package:qrreader_app/src/pages/directions_page.dart';
 import 'package:qrreader_app/src/pages/map_page.dart';
-import 'package:qrcode_reader/qrcode_reader.dart';
-import 'package:qrreader_app/src/providers/db_provider.dart';
+import 'package:qrreader_app/src/utils/utils.dart' as utils;
 
 class HomePage extends StatefulWidget {
 
@@ -15,6 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   
   int currentIndex = 0;
+  final _scansBloc = new ScansBloc();
   
   @override
   Widget build(BuildContext context) {
@@ -25,9 +28,7 @@ class _HomePageState extends State<HomePage> {
           actions: <Widget>[
             IconButton(
               icon: Icon(Icons.delete_forever),
-              onPressed: (){
-                
-              },
+              onPressed: _scansBloc.deleteAll,
             )
           ],
         ),
@@ -45,9 +46,9 @@ class _HomePageState extends State<HomePage> {
 
   _scanQR() async{
     
-    //geo:-32.8779124529526,-68.83014693697817
+    String futureString2 = "geo:-32.8779124529526,-68.83014693697817";
 
-    String futureString = 'http://mlcorp.tech/';
+    String futureString = 'http://www.google.com.ar/';
 
     if(futureString != null){
 
@@ -55,9 +56,30 @@ class _HomePageState extends State<HomePage> {
         valor: futureString
       );
 
-      DBProvider.db.save(qr).then((data){
-        print(data);
-      });
+      _scansBloc.save(qr);
+
+      Qr qr2 = Qr(
+        valor: futureString2
+      );
+
+      _scansBloc.save(qr2);
+
+      if (Platform.isIOS){
+        Future.delayed(Duration(milliseconds: 750), (){
+          utils.launchURL(context, qr);
+        });
+      }
+      else{
+        utils.launchURL(context, qr);
+      }      
+
+      //Qr qr2 = Qr(
+      //  valor: futureString2
+      //);
+
+      //_scansBloc.save(qr2);
+
+      
 
     }
 
@@ -69,12 +91,6 @@ class _HomePageState extends State<HomePage> {
 
     //  futureString = e.toString();
 
-    //}
-
-    //print(futureString);
-
-    //if(futureString != null){
-    //  print('información');
     //}
 
 
