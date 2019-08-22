@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:qrcode_reader/qrcode_reader.dart';
 import 'package:qrreader_app/src/bloc/scans_bloc.dart';
 import 'package:qrreader_app/src/model/qr_model.dart';
 import 'package:qrreader_app/src/pages/directions_page.dart';
@@ -45,24 +46,25 @@ class _HomePageState extends State<HomePage> {
   }
 
   _scanQR() async{
-    
-    String futureString2 = "geo:-32.8779124529526,-68.83014693697817";
 
-    String futureString = 'http://www.google.com.ar/';
+    String futureString;
+    
+    try {
+
+      futureString = await new QRCodeReader().scan();
+
+    } catch (e) {
+
+      futureString = null;
+
+    }
 
     if(futureString != null){
-
       Qr qr = Qr(
         valor: futureString
       );
 
       _scansBloc.save(qr);
-
-      Qr qr2 = Qr(
-        valor: futureString2
-      );
-
-      _scansBloc.save(qr2);
 
       if (Platform.isIOS){
         Future.delayed(Duration(milliseconds: 750), (){
@@ -71,29 +73,8 @@ class _HomePageState extends State<HomePage> {
       }
       else{
         utils.launchURL(context, qr);
-      }      
-
-      //Qr qr2 = Qr(
-      //  valor: futureString2
-      //);
-
-      //_scansBloc.save(qr2);
-
-      
-
+      }          
     }
-
-    //try {
-
-    //  futureString = await new QRCodeReader().scan();
-
-    //} catch (e) {
-
-    //  futureString = e.toString();
-
-    //}
-
-
   }
 
   Widget _createBottomNavigationBar() {

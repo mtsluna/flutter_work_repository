@@ -13,6 +13,9 @@ class MapPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    _scansBloc.getAll();
+
     return StreamBuilder<List<Qr>>(
       stream: _scansBloc.scansStream,
       builder: (BuildContext context, AsyncSnapshot<List<Qr>> snapshot) {
@@ -42,7 +45,7 @@ class MapPage extends StatelessWidget {
             },
             child: ListTile(
               leading: Icon(
-                Icons.cloud_queue,
+                Icons.map,
                 color: Theme.of(context).primaryColor,
               ),
               title: Text(snapshot.data[index].valor),
