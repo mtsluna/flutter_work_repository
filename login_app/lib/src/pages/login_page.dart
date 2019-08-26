@@ -1,6 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:login_app/src/blocs/login_bloc.dart';
+import 'package:login_app/src/blocs/provider.dart';
+import 'package:login_app/src/pages/home_page.dart';
 
 class LoginPage extends StatelessWidget {
 
@@ -14,14 +17,14 @@ class LoginPage extends StatelessWidget {
   }
 
   Stack _createLogin(BuildContext context){
-
+    
     final size = MediaQuery.of(context).size;
 
     return Stack(
       children: <Widget>[
         _createBackgroundGradient(context, size),        
         _createBackgroundDecoration(context, size),
-        _createFormCard(size),
+        _createFormCard(context, size),
       ],
     );
   }
@@ -86,7 +89,7 @@ class LoginPage extends StatelessWidget {
 
   }
 
-  Widget _createFormCard(Size size){
+  Widget _createFormCard(BuildContext context, Size size){
 
     return Container(
       padding: EdgeInsets.only(top: 60.0),
@@ -103,7 +106,7 @@ class LoginPage extends StatelessWidget {
                 height: 10.0,
                 width: double.infinity,
               ),
-              _createCard(size)
+              _createCard(context, size)
             ],
           ),
         ],
@@ -112,7 +115,10 @@ class LoginPage extends StatelessWidget {
 
   }
 
-  Widget _createCard(Size size) {
+  Widget _createCard(BuildContext context, Size size) {
+
+    final bloc = Provider.of(context);
+
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -138,7 +144,7 @@ class LoginPage extends StatelessWidget {
               ]
             ),
             child: Column(
-              children: _inputFields()
+              children: _inputFields(bloc)
             ),
           ),
           SizedBox(height: 20.0),
@@ -154,7 +160,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  List<Widget> _inputFields(){
+  List<Widget> _inputFields(LoginBloc bloc){
     return <Widget>[
       Text(
         "Ingreso",
@@ -163,64 +169,97 @@ class LoginPage extends StatelessWidget {
         ),
       ),
       SizedBox(height: 40.0,),
-      _createEmail(),
+      _createEmail(bloc),
       SizedBox(height: 20.0,),
-      _createPassword(),
+      _createPassword(bloc),
       SizedBox(height: 20.0,),
-      _createButton(),
+      _createButton(bloc),
       SizedBox(height: 20.0,),
     ];
   }
 
-  Widget _createEmail(){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        keyboardType: TextInputType.emailAddress,
-        decoration: InputDecoration(
-          icon: Icon(
-            Icons.alternate_email,
-            color: Colors.deepPurple,
+  Widget _createEmail(LoginBloc bloc){
+
+    return StreamBuilder(
+      stream: bloc.emailStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            keyboardType: TextInputType.emailAddress,
+            decoration: InputDecoration(
+              icon: Icon(
+                Icons.alternate_email,
+                color: Colors.deepPurple,
+              ),
+              hintText: 'ejemplo@correo.com',
+              labelText: 'E-Mail Address',
+              counterText: snapshot.data,
+              errorText: snapshot.error
+            ),
+            onChanged: bloc.changeEmail,
           ),
-          hintText: 'ejemplo@correo.com',
-          labelText: 'E-Mail Address'
-        ),
-      ),
-    );
-  }
-
-  Widget _createPassword(){
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextField(
-        obscureText: true,
-        decoration: InputDecoration(
-          icon: Icon(
-            Icons.lock_outline,
-            color: Colors.deepPurple,
-          ),
-          labelText: 'Password'
-        ),
-      ),
-    );
-  }
-
-  Widget _createButton(){
-    return RaisedButton(
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-        child: Text('Ingresar'),
-      ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(5.0)
-      ),
-      elevation: 0.0,
-      color: Colors.deepPurple,
-      textColor: Colors.white,
-      onPressed: (){
-
+        );
       },
     );
+  }
+
+  Widget _createPassword(LoginBloc bloc){
+
+    return StreamBuilder(
+      stream: bloc.passwordStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            obscureText: true,
+            decoration: InputDecoration(
+              icon: Icon(
+                Icons.lock_outline,
+                color: Colors.deepPurple,
+              ),
+              labelText: 'Password',
+              counterText: snapshot.data,
+              errorText: snapshot.error
+            ),
+            onChanged: bloc.changePassword,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _createButton(LoginBloc bloc){
+
+    return StreamBuilder(
+      stream: bloc.formValidStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot){
+        return RaisedButton(
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
+            child: Text('Ingresar'),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5.0)
+          ),
+          elevation: 0.0,
+          color: Colors.deepPurple,
+          textColor: Colors.white,
+          onPressed: snapshot.hasData ? () => _login(context, bloc) : null,
+        );
+      },
+    );    
+  }
+
+  _login(BuildContext context, LoginBloc bloc){
+    print('================================');
+    print('Email: ${bloc.email}');
+    print('Passw: ${bloc.passw}');
+    print('================================');
+  
+    Navigator.pushReplacementNamed(context, HomePage.routeName);
+
   }
 
 }
