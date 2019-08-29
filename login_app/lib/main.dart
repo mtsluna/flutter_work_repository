@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:login_app/src/blocs/provider.dart';
 import 'package:login_app/src/pages/home_page.dart';
 import 'package:login_app/src/pages/login_page.dart';
+import 'package:login_app/src/pages/product_page.dart';
  
 void main() => runApp(MyApp());
  
@@ -18,10 +19,11 @@ class _MyAppState extends State<MyApp> {
       child: MaterialApp(
         title: 'Login App',
         debugShowCheckedModeBanner: false,
-        initialRoute: LoginPage.routeName,
+        initialRoute: HomePage.routeName,
         routes: {
           HomePage.routeName  : (BuildContext context) => HomePage(),
-          LoginPage.routeName : (BuildContext context) => LoginPage()
+          LoginPage.routeName : (BuildContext context) => LoginPage(),
+          ProductPage.routeName : (BuildContext context) => ProductPage(),
         },
         theme: ThemeData(
           primaryColor: Colors.deepPurple
