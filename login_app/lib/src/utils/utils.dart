@@ -9,11 +9,33 @@ bool isNumeric(String s){
 }
 
 void viewSnackbar(GlobalKey<ScaffoldState> key, String message){
-    final snackbar = SnackBar(
-      content: Text(message),
-      duration: Duration(milliseconds: 1500),
-    );
+  final snackbar = SnackBar(
+    content: Text(message),
+    duration: Duration(milliseconds: 1500),
+  );
 
-    key.currentState.showSnackBar(snackbar);
+  key.currentState.showSnackBar(snackbar);
 
-  }
+}
+
+void mostrarAlerta(BuildContext context, String message) {
+
+  showDialog(
+    context: context,
+    builder: (context){
+      return AlertDialog(
+        title: Text('Incorrect arguments'),
+        content: Text(message),
+        actions: <Widget>[
+          FlatButton(
+            child: Text('Close'),
+            onPressed: (){
+              Navigator.of(context).pop();
+            },
+          )
+        ],
+      );
+    }
+  );
+
+}

@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:login_app/src/blocs/login_bloc.dart';
 import 'package:login_app/src/blocs/provider.dart';
 import 'package:login_app/src/pages/home_page.dart';
-import 'package:login_app/src/pages/register_page.dart';
+import 'package:login_app/src/pages/login_page.dart';
 import 'package:login_app/src/providers/user_provider.dart';
 import 'package:login_app/src/utils/utils.dart' as utils;
 
-class LoginPage extends StatelessWidget {
+class RegisterPage extends StatelessWidget {
 
-  static final routeName = "login";
+  static final routeName = "register";
   final userProvider = new UserProvider();
 
   @override
@@ -153,8 +153,8 @@ class LoginPage extends StatelessWidget {
           ),
           SizedBox(height: 20.0),
           FlatButton(
-            child: Text('Crear una nueva cuenta'),
-            onPressed: () => Navigator.pushReplacementNamed(context, RegisterPage.routeName)
+            child: Text('You already have an account? Login'),
+            onPressed: () => Navigator.pushReplacementNamed(context, LoginPage.routeName)
           ),
           SizedBox(height: 40.0)
         ],
@@ -165,7 +165,7 @@ class LoginPage extends StatelessWidget {
   List<Widget> _inputFields(LoginBloc bloc){
     return <Widget>[
       Text(
-        "Login",
+        "Register",
         style: TextStyle(
           fontSize: 20.0
         ),
@@ -240,7 +240,7 @@ class LoginPage extends StatelessWidget {
         return RaisedButton(
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 80.0, vertical: 15.0),
-            child: Text('Connect'),
+            child: Text('Create new account'),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5.0)
@@ -255,23 +255,21 @@ class LoginPage extends StatelessWidget {
   }
 
   _login(BuildContext context, LoginBloc bloc) async {
-  
-    Map info = await userProvider.login(bloc.email, bloc.passw);
+
+    Map info = await userProvider.newUser(bloc.email, bloc.passw);
     String message = " ";
 
     if(info['ok']){
-      Navigator.pushReplacementNamed(context, HomePage.routeName);
+      Navigator.pushReplacementNamed(context, LoginPage.routeName);
     }
     else{
 
-      if(info['message'] == 'EMAIL_NOT_FOUND') { message = 'Incorrect email'; }
-      else if (info['message'] == 'INVALID_PASSWORD') { message = 'Incorrect password'; }
+      if(info['message'] == 'EMAIL_EXISTS') { message = 'This mail already exists in the database of users'; }
+      else { message = info['message']; }
 
-      utils.mostrarAlerta(context, info['message']);
+      utils.mostrarAlerta(context, message);
       
     }
-
-
     //Navigator.pushReplacementNamed(context, HomePage.routeName);
 
   }
