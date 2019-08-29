@@ -1,11 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:login_app/src/models/image_model.dart';
 import 'package:login_app/src/models/product_model.dart';
-import 'package:login_app/src/providers/image_provider.dart';
 import 'package:login_app/src/providers/product_provider.dart';
 import 'package:login_app/src/utils/utils.dart' as utils;
 
@@ -40,12 +36,6 @@ class _ProductPageState extends State<ProductPage> {
       key: scafoldKey,
       appBar: AppBar(
         title: Text('Product'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.photo_size_select_actual),
-            onPressed: _selectPhoto,
-          )
-        ],
       ),
       body: _body(context),
     );
@@ -59,7 +49,6 @@ class _ProductPageState extends State<ProductPage> {
           key: formKey,
           child: Column(
             children: <Widget>[
-              _viewPhoto(),
               _createName(),
               _createPrice(),
               _createAvailable(),
@@ -137,10 +126,6 @@ class _ProductPageState extends State<ProductPage> {
         _saving = true;
       });
 
-      Imgur imgur = new Imgur();
-      ImgurProvider imgurProvider = new ImgurProvider();
-      imgur = await imgurProvider.post(base64);
-
       if(product.id == null){
         try {
           productProvider.post(product);
@@ -176,42 +161,5 @@ class _ProductPageState extends State<ProductPage> {
         });
       },
     );
-  }
-
-  Widget _viewPhoto(){
-    if(product.photoUrl != null){
-      //TODO: hacer
-      return Container();
-    }
-    else{
-      return Image(
-        image: AssetImage(
-          photo?.path ?? 'assets/no-image.png'
-        ),
-        height: 300.0,
-        fit: BoxFit.cover
-      );
-    }
-  }
-
-  void inputPhoto(ImageSource src) async {
-    photo = await ImagePicker.pickImage(
-      source: src
-    );
-
-    if(photo != null){
-
-    }
-
-    //photo.readAsBytesSync();
-    base64 = Base64Codec.urlSafe().encode(photo.readAsBytesSync());
-
-    setState(() {});
-  }
-
-  void _selectPhoto() async {
-
-    inputPhoto(ImageSource.gallery);
-
   }
 }
