@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:login_app/src/blocs/product_bloc.dart';
 import 'package:login_app/src/blocs/provider.dart';
 import 'package:login_app/src/models/product_model.dart';
 import 'package:login_app/src/pages/product_page.dart';
-import 'package:login_app/src/providers/product_provider.dart';
 
 class HomePage extends StatelessWidget {
 
   static final routeName = "home";  
-  final ProductProvider productProvider = new ProductProvider();
-
+  
   @override
   Widget build(BuildContext context) {
 
-  final bloc = Provider.of(context);  
+    final productBloc = Provider.productosBloc(context);
+    productBloc.getProduct();
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Home page')
       ),
-      body: _createList(),
+      body: _createList(productBloc),
       floatingActionButton: _createButton(context),
     );
   }
@@ -31,15 +31,16 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  _createList() {
-    return FutureBuilder(
-      future: productProvider.get(),
+  _createList(ProductBloc productBloc) {
+
+    return StreamBuilder(
+      stream: productBloc.getProductStream,
       builder: (BuildContext context, AsyncSnapshot<List<Product>> snapshot) {
         if(snapshot.hasData){
           return ListView.builder(
             itemCount: snapshot.data.length,
             itemBuilder: (context, i){
-              return _createListItem(context, snapshot.data[i]);
+              return _createListItem(context, snapshot.data[i], productBloc);
             },
           );
         }else{
@@ -49,14 +50,14 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _createListItem(BuildContext context, Product product) {
+  Widget _createListItem(BuildContext context, Product product, ProductBloc productBloc) {
     return Dismissible(
       key: UniqueKey(),
       background: Container(
         color: Colors.red,
       ),
       onDismissed: (direction){
-        productProvider.delete(product.id);
+        productBloc.deleteProduct(product.id);
       },
       child: ListTile(
         title: Text('${product.name}'),

@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:login_app/src/blocs/product_bloc.dart';
 import 'package:login_app/src/models/product_model.dart';
-import 'package:login_app/src/providers/product_provider.dart';
 import 'package:login_app/src/utils/utils.dart' as utils;
 
 class ProductPage extends StatefulWidget {
@@ -17,14 +17,16 @@ class _ProductPageState extends State<ProductPage> {
   
   final formKey = GlobalKey<FormState>();
   final scafoldKey = GlobalKey<ScaffoldState>();
+  ProductBloc productBloc;
   Product product = new Product();
-  final ProductProvider productProvider = new ProductProvider();
   bool _saving = false;
   File photo;
   String base64 = "";
 
   @override
   Widget build(BuildContext context) {
+
+    productBloc = new ProductBloc();
 
     final Product prodData = ModalRoute.of(context).settings.arguments;
 
@@ -128,7 +130,7 @@ class _ProductPageState extends State<ProductPage> {
 
       if(product.id == null){
         try {
-          productProvider.post(product);
+          productBloc.postProduct(product);
           utils.viewSnackbar(scafoldKey, 'Created');
         } catch (e) {
           utils.viewSnackbar(scafoldKey, 'Try again later');
@@ -136,7 +138,7 @@ class _ProductPageState extends State<ProductPage> {
       }
       else{
         try {
-          productProvider.put(product);
+          productBloc.putProduct(product);
           utils.viewSnackbar(scafoldKey, 'Updated');
         } catch (e) {
           utils.viewSnackbar(scafoldKey, 'Try again later');

@@ -36,6 +36,8 @@ class ProductProvider{
       return [];
     }
 
+    if(decodedData['error'] != null) return [];
+
     decodedData.forEach((key, value){
       final prod = Product.fromJson(value);
       prod.id = key;
